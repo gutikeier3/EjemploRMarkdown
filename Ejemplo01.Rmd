@@ -1,0 +1,39 @@
+---
+title: "Primer Reporte en R Markdown"
+author: "Arturo Gutiérrez Escamilla 000136979"
+date: "Monday, January 26, 2015"
+output: html_document
+---
+```{rpaquetes}
+library(ggmap)
+```
+
+```{r GenerarDatos, message=FALSE}
+# Llenar información (sólo lo que está entre "").
+clave.unica <- rep("136979",3)
+# 1: Si es mixto, 0: no lo es.
+es.mixto <- c(universidad = 1, preparatoria = 1, secundaria = 1)
+# Llenar con la dirección.
+universidad <- geocode("ITAM")
+preparatoria <- geocode("campos Eliseos 139, Polanco 11550")
+secundaria <- geocode("Callao 842, Lindavista")
+# Generamos la información
+educacion <- rbind(universidad, preparatoria, secundaria)
+educacion <- cbind(clave.unica, es.mixto, educacion)
+```
+
+```{r ObtencionCoordenadasyMapas,warning=FALSE, message=FALSE}
+limites <- make_bbox(lon, lat, educacion, f = 0.7)
+mapa <- get_map(location = limites, 
+                maptype = "roadmap", 
+                source = "google")
+```
+
+```{r GraficarLocalizaciones, echo=FALSE}
+ggmap(mapa) + 
+geom_point(data = educacion, 
+           aes(x = lon, y = lat), 
+           size = 4, alpha = 0.6, colour = "red")
+```
+
+
